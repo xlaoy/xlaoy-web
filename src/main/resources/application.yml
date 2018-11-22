@@ -1,0 +1,15 @@
+server:
+  port: ${outcfg.server.port}
+  tomcat:
+    uri-encoding: UTF-8
+
+spring:
+  http:
+    encoding:
+      charset: UTF-8
+      force: true
+  thymeleaf:
+    prefix: classpath:/pages/
+    suffix: .html
+    cache: false
+    mode: HTML5
