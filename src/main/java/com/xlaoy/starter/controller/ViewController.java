@@ -14,4 +14,9 @@ public class ViewController {
         return "index";
     }
 
+
+    @GetMapping("/websocket")
+    public String websocket() {
+        return "websocket";
+    }
 }

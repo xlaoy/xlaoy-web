@@ -30,6 +30,9 @@ function getData() {
         type: "GET",
         url: url,
         contentType: "application/json",
+        beforeSend: function (XMLHttpRequest) {
+            XMLHttpRequest.setRequestHeader("jwttoken", "eyJhbGciOiJIUzUxMiJ9.eyJndWlkIjoiODY2MWNjNTMyOTY0NGUzNWJiY2UyYmJlZDY4YmQ0ZGYiLCJleHAiOjE1NDU4Mjk5ODYsImlhdCI6MTU0NTgwODM4Nn0.McySoLDKdPjaOVyR_Njj_2_Mc6la1V-Y-XR8wlCbMxSoH5O_u9Gx7W1Bplp6AHfDpwB6MonjKT1aRIEU1IgtOg");
+        },
         success: function(response) {
             console.log("success");
         },

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8"/>
+    <title>index</title>
+</head>
+<body>
+haha
+</body>
+
+<script>
+
+    var socket;
+    if(typeof(WebSocket) == "undefined") {
+        console.log("您的浏览器不支持WebSocket");
+    }else {
+        console.log("您的浏览器支持WebSocket");
+
+        socket = new WebSocket("wss://dev-ws.zchz.com/ws-trade-service/zkshop/zkrent/get_settle_status/123456");
+        //socket = new WebSocket("ws://localhost:9100/ws-trade-service/zkshop/zkrent/get_settle_status/123456");
+        //打开事件
+        socket.onopen = function() {
+            console.log("Socket 已打开");
+        };
+        //获得消息事件
+        socket.onmessage = function(msg) {
+            console.log(msg.data);
+        };
+        //关闭事件
+        socket.onclose = function() {
+            console.log("Socket已关闭");
+        };
+        //发生了错误事件
+        socket.onerror = function() {
+            alert("Socket发生了错误");
+        }
+    }
+
+
+</script>
+
+</html>
