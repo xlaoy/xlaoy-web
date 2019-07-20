@@ -24,5 +24,10 @@ public class SystemAppController {
         return env.getProperty(key);
     }
 
+    @GetMapping("/system/get_doc")
+    public String getDoc() {
+        return "hahah";
+    }
+
 
 }

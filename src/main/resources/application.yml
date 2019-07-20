@@ -1,5 +1,5 @@
 server:
-  port: ${outcfg.server.port}
+  port: 6000
   tomcat:
     uri-encoding: UTF-8
 
@@ -13,3 +13,4 @@ spring:
     suffix: .html
     cache: false
     mode: HTML5
+    encoding: UTF-8
