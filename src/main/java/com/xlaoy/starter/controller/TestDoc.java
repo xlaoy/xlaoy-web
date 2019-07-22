@@ -22,8 +22,8 @@ public class TestDoc {
 
     @Test
     public void test() {
-        docService.setTitle("提交PTI接口");
-        docService.setApi("/api/v2/reform/supervise/baseHotelInfo");
+        docService.setTitle("酒店进程列表");
+        docService.setApi("/api/v2/flows/search");
         docService.done();
     }
 }

@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.RestTemplate;
 
+import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
@@ -35,6 +36,8 @@ public class DocService {
     private final static Logger logger = LoggerFactory.getLogger(DocService.class);
 
     private LinkedHashMap definitionsMap;
+
+    private LinkedHashMap pathsMap;
 
     private String api;
 
@@ -72,12 +75,16 @@ public class DocService {
         this.summary = summary;
     }
 
-    public void done() {
-        String uri = "http://ali-dev.ahotels.tech/apollo-bff-web/v2/api-docs";
+    @PostConstruct
+    public void init() {
+        String uri = "http://127.0.0.1:5000/v2/api-docs";
         String json = restTemplate.getForObject(URI.create(uri), String.class);
         Map<String, LinkedHashMap> map1 = JsonUtil.buildNormalMapper().fromJson(json, Map.class);
-        LinkedHashMap pathsMap = map1.get("paths");
+        pathsMap = map1.get("paths");
         definitionsMap = map1.get("definitions");
+    }
+
+    public void done() {
         LinkedHashMap<String, LinkedHashMap> apiMap = (LinkedHashMap)pathsMap.get(api);
         if(apiMap.size() != 1) {
             throw new BizException("api的请求方式过多");
@@ -113,11 +120,12 @@ public class DocService {
             LinkedHashMap responses = (LinkedHashMap)v.get("responses");
             LinkedHashMap res_200 = (LinkedHashMap)responses.get("200");
             LinkedHashMap res_schema = (LinkedHashMap)res_200.get("schema");
-            String res_$ref = res_schema.get("$ref").toString();
-            String[] strs = res_$ref.split("/");
-            String refence = strs[strs.length - 1];
-            this.anlyResponse(refence);
-
+            if(res_schema != null) {
+                String res_$ref = res_schema.get("$ref").toString();
+                String[] strs = res_$ref.split("/");
+                String refence = strs[strs.length - 1];
+                this.anlyResponse(refence);
+            }
         });
 
 
@@ -125,7 +133,13 @@ public class DocService {
 
         createMDFile(md);
 
-        logger.info("123");
+
+        this.setApi("");
+        this.setMethod("");
+        this.setSummary("");
+        this.setTitle("");
+        this.requestMap = null;
+        this.requestMap = null;
     }
 
     private void handRequestDTO(List<ParmaDesc> parmaDescList) {
