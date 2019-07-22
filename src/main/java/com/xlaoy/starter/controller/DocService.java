@@ -39,6 +39,8 @@ public class DocService {
 
     private LinkedHashMap pathsMap;
 
+    private String projectDir = System.getProperty("user.dir");
+
     private String api;
 
     //标题
@@ -85,30 +87,30 @@ public class DocService {
     }
 
     public void done() {
-        LinkedHashMap<String, LinkedHashMap> apiMap = (LinkedHashMap)pathsMap.get(api);
-        if(apiMap.size() != 1) {
+        LinkedHashMap<String, LinkedHashMap> apiMap = (LinkedHashMap) pathsMap.get(api);
+        if (apiMap.size() != 1) {
             throw new BizException("api的请求方式过多");
         }
         List<ParmaDesc> parmaDescList = new ArrayList<>();
         apiMap.forEach((k, v) -> {
             this.setMethod(k);
-            if(v.get("summary") != null) {
+            if (v.get("summary") != null) {
                 this.setSummary(v.get("summary").toString());
             }
 
             //参数
-            List<LinkedHashMap> parameters = (List<LinkedHashMap>)v.get("parameters");
+            List<LinkedHashMap> parameters = (List<LinkedHashMap>) v.get("parameters");
             parameters.forEach(p -> {
-                if(!"header".equals(p.get("in").toString())) {
+                if (!"header".equals(p.get("in").toString())) {
                     ParmaDesc parmaDesc = JsonUtil.buildNormalMapper().fromMapToObject(p, ParmaDesc.class);
                     parmaDescList.add(parmaDesc);
                 }
             });
-            if(CollectionUtils.isEmpty(parmaDescList)) {
+            if (CollectionUtils.isEmpty(parmaDescList)) {
                 requestMap.put("Request", parmaDescList);
-            } else if(parmaDescList.size() == 1) {
+            } else if (parmaDescList.size() == 1) {
                 ParmaDesc desc = parmaDescList.get(0);
-                if(!"body".equals(desc.getIn())) {
+                if (!"body".equals(desc.getIn())) {
                     requestMap.put("Request", parmaDescList);
                 }
             } else {
@@ -117,10 +119,10 @@ public class DocService {
             this.handRequestDTO(parmaDescList);
 
             //返回值
-            LinkedHashMap responses = (LinkedHashMap)v.get("responses");
-            LinkedHashMap res_200 = (LinkedHashMap)responses.get("200");
-            LinkedHashMap res_schema = (LinkedHashMap)res_200.get("schema");
-            if(res_schema != null) {
+            LinkedHashMap responses = (LinkedHashMap) v.get("responses");
+            LinkedHashMap res_200 = (LinkedHashMap) responses.get("200");
+            LinkedHashMap res_schema = (LinkedHashMap) res_200.get("schema");
+            if (res_schema != null) {
                 String res_$ref = res_schema.get("$ref").toString();
                 String[] strs = res_$ref.split("/");
                 String refence = strs[strs.length - 1];
@@ -138,8 +140,8 @@ public class DocService {
         this.setMethod("");
         this.setSummary("");
         this.setTitle("");
-        this.requestMap.clear();
-        this.requestMap.clear();
+        this.requestMap = null;
+        this.requestMap = null;
     }
 
     private void handRequestDTO(List<ParmaDesc> parmaDescList) {

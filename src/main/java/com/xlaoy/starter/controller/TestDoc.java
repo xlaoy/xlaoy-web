@@ -7,6 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * @author yijun.zhang
  * @version 1.0
@@ -19,11 +22,21 @@ public class TestDoc {
     @Autowired
     private DocService docService;
 
+    private Map<String, String> mapApis = new HashMap<>();
+
 
     @Test
     public void test() {
-        docService.setTitle("酒店进程列表");
-        docService.setApi("/api/v2/flows/search");
-        docService.done();
+        mapApis.put("/api/v2/transformation/transformation/list", "Transformation列表");
+        mapApis.put("/api/v2/transformation/transformationInfo/get", "Transformation详情");
+        mapApis.put("/api/v2/transformation/roomStatusOperation/list", "Transformation房间信息列表");
+        mapApis.put("/api/v2/transformation/roomStateOperate", "房态变更");
+
+        mapApis.forEach((k, v) -> {
+
+            docService.setTitle(v);
+            docService.setApi(k);
+            docService.done();
+        });
     }
 }
