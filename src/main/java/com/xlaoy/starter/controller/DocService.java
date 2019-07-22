@@ -138,8 +138,8 @@ public class DocService {
         this.setMethod("");
         this.setSummary("");
         this.setTitle("");
-        this.requestMap = null;
-        this.requestMap = null;
+        this.requestMap.clear();
+        this.requestMap.clear();
     }
 
     private void handRequestDTO(List<ParmaDesc> parmaDescList) {
