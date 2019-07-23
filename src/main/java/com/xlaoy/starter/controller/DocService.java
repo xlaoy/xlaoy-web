@@ -175,12 +175,18 @@ public class DocService {
             }
             if(vmap.get("items") != null) {
                 LinkedHashMap items = (LinkedHashMap)vmap.get("items");
-                String $ref = items.get("$ref").toString();
-                String[] strs = $ref.split("/");
-                String refence = strs[strs.length - 1];
-                desc.setIn("body");
-                desc.setType("List<" + refence + ">");
-                desc.setRefence(refence);
+                if(items.get("$ref") != null) {
+                    String $ref = items.get("$ref").toString();
+                    String[] strs = $ref.split("/");
+                    String refence = strs[strs.length - 1];
+                    desc.setIn("body");
+                    desc.setType("List<" + refence + ">");
+                    desc.setRefence(refence);
+                }
+                if(items.get("type") != null) {
+                    String type = items.get("type").toString();
+                    desc.setType("List<" + type + ">");
+                }
             }
             plist.add(desc);
         });
@@ -204,12 +210,18 @@ public class DocService {
             desc.setType(resv.get("type") == null ? "" : resv.get("type").toString());
             if(resv.get("items") != null) {
                 LinkedHashMap items = (LinkedHashMap)resv.get("items");
-                String $ref = items.get("$ref").toString();
-                String[] strs = $ref.split("/");
-                String refence = strs[strs.length - 1];
-                desc.setIn("body");
-                desc.setType("List<" + refence + ">");
-                desc.setRefence(refence);
+                if(items.get("$ref") != null) {
+                    String $ref = items.get("$ref").toString();
+                    String[] strs = $ref.split("/");
+                    String refence = strs[strs.length - 1];
+                    desc.setIn("body");
+                    desc.setType("List<" + refence + ">");
+                    desc.setRefence(refence);
+                }
+                if(items.get("type") != null) {
+                    String type = items.get("type").toString();
+                    desc.setType("List<" + type + ">");
+                }
             }
             if(resv.get("$ref") != null) {
                 String $ref = resv.get("$ref").toString();
