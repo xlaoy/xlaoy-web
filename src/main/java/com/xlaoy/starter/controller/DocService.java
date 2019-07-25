@@ -86,6 +86,9 @@ public class DocService {
 
     public void done() {
         LinkedHashMap<String, LinkedHashMap> apiMap = (LinkedHashMap)pathsMap.get(api);
+        if(CollectionUtils.isEmpty(apiMap)) {
+            throw new BizException("api没找到");
+        }
         if(apiMap.size() != 1) {
             throw new BizException("api的请求方式过多");
         }

@@ -22,8 +22,8 @@ public class TestDoc {
 
     @Test
     public void test() {
-        docService.setTitle("酒店进程列表");
-        docService.setApi("/api/v2/flows/search");
+        docService.setTitle("公共区域问题项进度");
+        docService.setApi("/api/v2/file/search");
         docService.done();
     }
 }
