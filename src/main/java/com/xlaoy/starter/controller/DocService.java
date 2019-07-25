@@ -79,7 +79,7 @@ public class DocService {
 
     @PostConstruct
     public void init() {
-        String uri = "http://127.0.0.1:5000/v2/api-docs";
+        String uri = "http://ali-test.ahotels.tech/apollo-bff-web/v2/api-docs";
         String json = restTemplate.getForObject(URI.create(uri), String.class);
         Map<String, LinkedHashMap> map1 = JsonUtil.buildNormalMapper().fromJson(json, Map.class);
         pathsMap = map1.get("paths");
@@ -145,11 +145,11 @@ public class DocService {
     }
 
     private void handRequestDTO(List<ParmaDesc> parmaDescList) {
-        if(CollectionUtils.isEmpty(parmaDescList)) {
+        if (CollectionUtils.isEmpty(parmaDescList)) {
             return;
         }
         parmaDescList.forEach(parm -> {
-            if("body".equals(parm.getIn())) {
+            if ("body".equals(parm.getIn()) && parm.getRefence() != null) {
                 parm.setType(parm.getRefence());
                 anlyRequest(parm.getRefence());
             }
@@ -157,17 +157,17 @@ public class DocService {
     }
 
     private void anlyRequest(String ref) {
-        LinkedHashMap definition = (LinkedHashMap)definitionsMap.get(ref);
-        LinkedHashMap properties = (LinkedHashMap)definition.get("properties");
+        LinkedHashMap definition = (LinkedHashMap) definitionsMap.get(ref);
+        LinkedHashMap properties = (LinkedHashMap) definition.get("properties");
         List<ParmaDesc> plist = new ArrayList<>();
         properties.forEach((key, value) -> {
-            LinkedHashMap vmap = (LinkedHashMap)value;
+            LinkedHashMap vmap = (LinkedHashMap) value;
             ParmaDesc desc = new ParmaDesc();
             desc.setName(key.toString());
-            desc.setRequired(vmap.get("allowEmptyValue") == null ? false : !(Boolean)vmap.get("allowEmptyValue"));
+            desc.setRequired(vmap.get("allowEmptyValue") == null ? false : !(Boolean) vmap.get("allowEmptyValue"));
             desc.setDescription(vmap.get("description") == null ? "" : vmap.get("description").toString());
             desc.setType(vmap.get("type") == null ? "" : vmap.get("type").toString());
-            if(vmap.get("$ref") != null) {
+            if (vmap.get("$ref") != null) {
                 String $ref = vmap.get("$ref").toString();
                 String[] strs = $ref.split("/");
                 String refence = strs[strs.length - 1];
@@ -175,9 +175,9 @@ public class DocService {
                 desc.setType(refence);
                 desc.setRefence(refence);
             }
-            if(vmap.get("items") != null) {
-                LinkedHashMap items = (LinkedHashMap)vmap.get("items");
-                if(items.get("$ref") != null) {
+            if (vmap.get("items") != null) {
+                LinkedHashMap items = (LinkedHashMap) vmap.get("items");
+                if (items.get("$ref") != null) {
                     String $ref = items.get("$ref").toString();
                     String[] strs = $ref.split("/");
                     String refence = strs[strs.length - 1];
@@ -185,7 +185,7 @@ public class DocService {
                     desc.setType("List<" + refence + ">");
                     desc.setRefence(refence);
                 }
-                if(items.get("type") != null) {
+                if (items.get("type") != null) {
                     String type = items.get("type").toString();
                     desc.setType("List<" + type + ">");
                 }
@@ -194,7 +194,7 @@ public class DocService {
         });
         requestMap.put(ref, plist);
         plist.forEach(p -> {
-            if("body".equals(p.getIn())) {
+            if ("body".equals(p.getIn())) {
                 anlyRequest(p.getRefence());
             }
         });
@@ -202,17 +202,17 @@ public class DocService {
 
 
     private void anlyResponse(String ref) {
-        LinkedHashMap definition = (LinkedHashMap)definitionsMap.get(ref);
-        LinkedHashMap<String, LinkedHashMap> res_properties = (LinkedHashMap)definition.get("properties");
+        LinkedHashMap definition = (LinkedHashMap) definitionsMap.get(ref);
+        LinkedHashMap<String, LinkedHashMap> res_properties = (LinkedHashMap) definition.get("properties");
         List<ParmaDesc> resList = new ArrayList<>();
         res_properties.forEach((resk, resv) -> {
             ParmaDesc desc = new ParmaDesc();
             desc.setName(resk);
             desc.setDescription(resv.get("description") == null ? "" : resv.get("description").toString());
             desc.setType(resv.get("type") == null ? "" : resv.get("type").toString());
-            if(resv.get("items") != null) {
-                LinkedHashMap items = (LinkedHashMap)resv.get("items");
-                if(items.get("$ref") != null) {
+            if (resv.get("items") != null) {
+                LinkedHashMap items = (LinkedHashMap) resv.get("items");
+                if (items.get("$ref") != null) {
                     String $ref = items.get("$ref").toString();
                     String[] strs = $ref.split("/");
                     String refence = strs[strs.length - 1];
@@ -220,12 +220,12 @@ public class DocService {
                     desc.setType("List<" + refence + ">");
                     desc.setRefence(refence);
                 }
-                if(items.get("type") != null) {
+                if (items.get("type") != null) {
                     String type = items.get("type").toString();
                     desc.setType("List<" + type + ">");
                 }
             }
-            if(resv.get("$ref") != null) {
+            if (resv.get("$ref") != null) {
                 String $ref = resv.get("$ref").toString();
                 String[] strs = $ref.split("/");
                 String refence = strs[strs.length - 1];
@@ -238,8 +238,10 @@ public class DocService {
 
         responseMap.put(ref, resList);
         resList.forEach(p -> {
-            if("body".equals(p.getIn())) {
-                anlyResponse(p.getRefence());
+            if ("body".equals(p.getIn())) {
+                if (p.getRefence() != null && !p.getDescription().equals("对应的下拉选项")) {
+                    anlyResponse(p.getRefence());
+                }
             }
         });
     }
@@ -276,7 +278,7 @@ public class DocService {
 
     private void createMDFile(String md) {
         try {
-            FileUtils.writeStringToFile(new File("F:\\md\\" + title + ".md"), md, Charset.forName("UTF-8"), false);
+            FileUtils.writeStringToFile(new File(projectDir + "/md/" + title + ".md"), md, Charset.forName("UTF-8"), false);
         } catch (IOException e) {
             logger.error("", e);
         }

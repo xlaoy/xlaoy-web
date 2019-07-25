@@ -27,10 +27,8 @@ public class TestDoc {
 
     @Test
     public void test() {
-        mapApis.put("/api/v2/transformation/transformation/list", "Transformation列表");
-        mapApis.put("/api/v2/transformation/transformationInfo/get", "Transformation详情");
-        mapApis.put("/api/v2/transformation/roomStatusOperation/list", "Transformation房间信息列表");
-        mapApis.put("/api/v2/transformation/roomStateOperate", "房态变更");
+        mapApis.put("/api/v2/psa/room/roomsInfoForPC/{id}", "获取客房详情(房型列表-房间整改列表-客房详情列表)");
+        mapApis.put("/api/v2/psa/room/roomsRectifyForPC", "客房整改列表分页");
 
         mapApis.forEach((k, v) -> {
 
@@ -38,5 +36,23 @@ public class TestDoc {
             docService.setApi(k);
             docService.done();
         });
+
+        //System.out.println("run  done");
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

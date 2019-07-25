@@ -3,11 +3,11 @@ ${summary}
 
 **二、请求地址**
 | 环境   | 地址   |
-|:----:|:----:|:----|
+|:----:|:----|:----|
 | dev   | https://apollo-dev.oyohotels.cn${api}   |
-| test   | https://apollo-test.oyohotels.cn${api}   |
+| test  | https://apollo-test.oyohotels.cn${api}   |
 | uat   | https://apollo-uat.oyohotels.cn${api}   |
-| prod   | https://apollo.oyohotels.cn${api}   |
+| prod  | https://apollo.oyohotels.cn${api}   |
 
 **三、请求方式**
 ${method}  application/json
@@ -21,27 +21,26 @@ ${method}  application/json
 | client_type   | String   | 客户端类型(公共参数)    |
 
 #foreach($map in $requestMap.entrySet())
-#set($c=$velocityCount + 1)
-$c.$!{map.key}
+    #set($c=$velocityCount + 1)
+    $c.$!{map.key}
 | 参数   | 是否必须     | 数据类型    | ** **说明   |
 |:----|:----|:----|:----|
-#foreach($item in $map.value)
-| $!{item.name}   | $!{item.required}   | $!{item.type}   | $!{item.description}   |
-#end
+    #foreach($item in $map.value)
+    | $!{item.name}   | $!{item.required}   | $!{item.type}   | $!{item.description}   |
+    #end
 
 #end
 
 **五、请求响应**
 #foreach($map in $responseMap.entrySet())
-$velocityCount.$!{map.key}
+    $velocityCount.$!{map.key}
 | 名称   | 类型   | 说明   |
 |:----|:----:|:----|:----:|:----|
-#foreach($item in $map.value)
-| $!{item.name}   | $!{item.type}   | $!{item.description}   |
-#end
+    #foreach($item in $map.value)
+    | $!{item.name}   | $!{item.type}   | $!{item.description}   |
+    #end
 
 #end
-
 
 **六、请求响应样例**
 1.请求Demo
