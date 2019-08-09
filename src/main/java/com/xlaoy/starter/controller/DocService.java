@@ -79,15 +79,35 @@ public class DocService {
 
     @PostConstruct
     public void init() {
-        String uri = "http://ali-test.ahotels.tech/apollo-bff-web/v2/api-docs";
+        String uri = "http://127.0.0.1:5000/v2/api-docs";
         String json = restTemplate.getForObject(URI.create(uri), String.class);
         Map<String, LinkedHashMap> map1 = JsonUtil.buildNormalMapper().fromJson(json, Map.class);
         pathsMap = map1.get("paths");
         definitionsMap = map1.get("definitions");
     }
 
+    public void alldone() {
+        pathsMap.forEach((ka, va) -> {
+            if(!"/ping".equals(ka.toString())) {
+                try {
+                    this.setApi(ka.toString());
+                    LinkedHashMap<String, LinkedHashMap> vmap = (LinkedHashMap)va;
+                    vmap.forEach((k, v) -> {
+                        this.setTitle(v.get("operationId").toString());
+                    });
+                    this.done();
+                } catch (Throwable e) {
+                    System.out.println(ka.toString() + "异常");
+                }
+            }
+        });
+    }
+
     public void done() {
         LinkedHashMap<String, LinkedHashMap> apiMap = (LinkedHashMap) pathsMap.get(api);
+        if(CollectionUtils.isEmpty(apiMap)) {
+            throw new BizException(api + "找不到");
+        }
         if (apiMap.size() != 1) {
             throw new BizException("api的请求方式过多");
         }
@@ -141,7 +161,7 @@ public class DocService {
         this.setSummary("");
         this.setTitle("");
         this.requestMap.clear();
-        this.requestMap.clear();
+        this.responseMap.clear();
     }
 
     private void handRequestDTO(List<ParmaDesc> parmaDescList) {
@@ -159,6 +179,9 @@ public class DocService {
     private void anlyRequest(String ref) {
         LinkedHashMap definition = (LinkedHashMap) definitionsMap.get(ref);
         LinkedHashMap properties = (LinkedHashMap) definition.get("properties");
+        if(CollectionUtils.isEmpty(properties)) {
+            return;
+        }
         List<ParmaDesc> plist = new ArrayList<>();
         properties.forEach((key, value) -> {
             LinkedHashMap vmap = (LinkedHashMap) value;
@@ -278,9 +301,9 @@ public class DocService {
 
     private void createMDFile(String md) {
         try {
-            FileUtils.writeStringToFile(new File(projectDir + "/md/" + title + ".md"), md, Charset.forName("UTF-8"), false);
+            FileUtils.writeStringToFile(new File( "F:\\md\\app\\" + title + ".md"), md, Charset.forName("UTF-8"), false);
         } catch (IOException e) {
-            logger.error("", e);
+            throw new BizException("生成文件异常");
         }
     }
 }
