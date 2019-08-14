@@ -33,8 +33,8 @@ public class TestDoc {
 
     @Test
     public void test() {
-        docService.setApi("/api/v2/psa/pc/room/saveRoomDetailsByRoomId");
-        docService.setTitle("saveRoomDetailsByRoomId");
+        docService.setApi("/api/v2/flows/getFlowType");
+        docService.setTitle("获取酒店进程类型");
         docService.done();
     }
 }
